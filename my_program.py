@@ -3,10 +3,9 @@
 """
 第5回演習問題
 再帰型ニューラルネットワーク (RNN) の基本実装による手書き数字分類
+このプログラムは、MNISTデータセットを用いて、数字の画像分類を行います。
 """
 import numpy as np
-#import matplotlib as mpl
-#mpl.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 from keras.utils.np_utils import to_categorical
@@ -14,15 +13,17 @@ from keras.datasets import mnist
 
 
 # --- ハイパーパラメータ設定 ---
-n_train = 1000  # 訓練データ数を500から1000に変更
-n_test = 1000   # テストデータ数を500から1000に変更
-num_epoch = 100 # エポック数を50から100に変更
-q = 128         # 中間層のユニット数 (今回は変更なし、例としてそのまま)
+n_train = 500   # 訓練データ数を1000から500に戻す
+n_test = 500    # テストデータ数を1000から500に戻す
+num_epoch = 50  # エポック数を100から50に戻す
+q = 128         # 中間層のユニット数
 eta = 0.01      # 学習率 (Adamを使っているため、Adamのalphaが優先されるが、コードに存在するため残す)
 
-plot_misslabeled = True # 誤分類結果の画像をプロットするかどうかをFalseからTrueに変更
+plot_misslabeled = True # 誤分類結果の画像をプロットするかどうか
 
 ##### データの取得 - MNISTデータセットのロードと前処理
+# MNISTデータセットの読み込みと、特定のクラス（0, 1, 2）への限定処理を行います。
+# 画像データは0-1の範囲に正規化され、ラベルはOne-Hotエンコーディング形式に変換されます。
 # クラス数を定義 (0, 1, 2の3クラス分類)
 m = 3
 
@@ -116,13 +117,13 @@ def backward(W, W_out, delta, delta_out, derivative):
     # delta_outは出力層からの誤差、deltaは次の時刻の中間層からの誤差
     return (np.dot(W_out.T, delta_out) + np.dot(W.T, delta)) * derivative
 
-def adam(W, m, v, dEdW, t, 
+def adam(W, m_val, v_val, dEdW, t, 
           alpha = 0.001, beta1 = 0.9, beta2 = 0.999, tol = 10**(-8)):
     """
     Adamオプティマイザの実装。
     W: 更新対象の重み
-    m: 1次モーメント推定値 (Adam内部状態)
-    v: 2次モーメント推定値 (Adam内部状態)
+    m_val: 1次モーメント推定値 (Adam内部状態)
+    v_val: 2次モーメント推定値 (Adam内部状態)
     dEdW: 重みWに関する勾配
     t: 更新回数 (エポックとは異なるグローバルな更新ステップ数)
     alpha: 学習率
@@ -131,8 +132,8 @@ def adam(W, m, v, dEdW, t,
     """
     # 課題４
     # adamを作成（前回と同じでよい）
-    m_t = beta1 * m + (1 - beta1) * dEdW
-    v_t = beta2 * v + (1 - beta2) * dEdW * dEdW
+    m_t = beta1 * m_val + (1 - beta1) * dEdW
+    v_t = beta2 * v_val + (1 - beta2) * dEdW * dEdW
     
     m_hat = m_t / (1 - beta1**t) # バイアス補正
     v_hat = v_t / (1 - beta2**t) # バイアス補正
@@ -326,11 +327,11 @@ for i in range(m): # 真のラベルの各クラスについて
         ConfMat[i, j] = np.sum((true_label == i) & (predict_label == j))
 
 plt.clf() # プロットをクリア
-fig, ax = plt.subplots(figsize=(6,6),tight_layout=True) # 図と軸を作成 (サイズを少し大きくした)
+fig, ax = plt.subplots(figsize=(6,6),tight_layout=True) # 図と軸を作成
 fig.show() # プロットウィンドウを表示（VS Codeなどで実行時に表示される）
 sns.heatmap(ConfMat.astype(dtype = int), linewidths=1, annot = True, fmt="d", cbar =False, cmap="Blues",
             xticklabels=[str(k) for k in range(m)], yticklabels=[str(k) for k in range(m)]) # 混同行列をヒートマップで表示
-ax.set_xlabel(xlabel="Predicted Label", fontsize=20) # 予測ラベルの軸ラベル (フォントサイズ変更)
-ax.set_ylabel(ylabel="True Label", fontsize=20)       # 真のラベルの軸ラベル (フォントサイズ変更)
+ax.set_xlabel(xlabel="Predicted Label", fontsize=18) # 予測ラベルの軸ラベル (フォントサイズを18に戻す)
+ax.set_ylabel(ylabel="True Label", fontsize=18)       # 真のラベルの軸ラベル (フォントサイズを18に戻す)
 plt.savefig("./confusion_matrix_adam_results.pdf", bbox_inches="tight", transparent=True) # 混同行列をPDFとして保存
 plt.close() # プロットウィンドウを閉じる
