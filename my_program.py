@@ -5,6 +5,7 @@
 再帰型ニューラルネットワーク (RNN) の基本実装による手書き数字分類
 このプログラムは、MNISTデータセットを用いて、数字の画像分類を行います。
 これは feature/my-first-branch ブランチ上での変更です。
+Issue #1: 訓練データとテストデータの数を1000に増やす、に対応する変更です。
 """
 import numpy as np
 import matplotlib.pyplot as plt
@@ -14,8 +15,8 @@ from keras.datasets import mnist
 
 
 # --- ハイパーパラメータ設定 ---
-n_train = 700   # 訓練データ数を500から700に変更 (feature/my-first-branchでの変更)
-n_test = 700    # テストデータ数を500から700に変更 (feature/my-first-branchでの変更)
+n_train = 1000   # 訓練データ数を700から1000に変更 (Issue #1対応)
+n_test = 1000    # テストデータ数を700から1000に変更 (Issue #1対応)
 num_epoch = 50  # エポック数
 q = 128         # 中間層のユニット数
 eta = 0.01      # 学習率 (Adamを使っているため、Adamのalphaが優先されるが、コードに存在するため残す)
