@@ -4,6 +4,8 @@
 第5回演習問題
 再帰型ニューラルネットワーク (RNN) の基本実装による手書き数字分類
 このプログラムは、MNISTデータセットを用いて、数字の画像分類を行います。
+これは feature/my-first-branch ブランチ上での変更です。
+Issue #1: 訓練データとテストデータの数を1000に増やす、に対応する変更です。
 """
 import numpy as np
 import matplotlib.pyplot as plt
@@ -13,9 +15,9 @@ from keras.datasets import mnist
 
 
 # --- ハイパーパラメータ設定 ---
-n_train = 500   # 訓練データ数を1000から500に戻す
-n_test = 500    # テストデータ数を1000から500に戻す
-num_epoch = 50  # エポック数を100から50に戻す
+n_train = 1000   # 訓練データ数を700から1000に変更 (Issue #1対応)
+n_test = 1000    # テストデータ数を700から1000に変更 (Issue #1対応)
+num_epoch = 50  # エポック数
 q = 128         # 中間層のユニット数
 eta = 0.01      # 学習率 (Adamを使っているため、Adamのalphaが優先されるが、コードに存在するため残す)
 
@@ -331,7 +333,7 @@ fig, ax = plt.subplots(figsize=(6,6),tight_layout=True) # 図と軸を作成
 fig.show() # プロットウィンドウを表示（VS Codeなどで実行時に表示される）
 sns.heatmap(ConfMat.astype(dtype = int), linewidths=1, annot = True, fmt="d", cbar =False, cmap="Blues",
             xticklabels=[str(k) for k in range(m)], yticklabels=[str(k) for k in range(m)]) # 混同行列をヒートマップで表示
-ax.set_xlabel(xlabel="Predicted Label", fontsize=18) # 予測ラベルの軸ラベル (フォントサイズを18に戻す)
-ax.set_ylabel(ylabel="True Label", fontsize=18)       # 真のラベルの軸ラベル (フォントサイズを18に戻す)
+ax.set_xlabel(xlabel="Predicted Label", fontsize=18) # 予測ラベルの軸ラベル
+ax.set_ylabel(ylabel="True Label", fontsize=18)       # 真のラベルの軸ラベル
 plt.savefig("./confusion_matrix_adam_results.pdf", bbox_inches="tight", transparent=True) # 混同行列をPDFとして保存
 plt.close() # プロットウィンドウを閉じる
